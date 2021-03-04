@@ -1,6 +1,8 @@
 package app
 
 import (
+	"crypto/ed25519"
+	"encoding/hex"
 	"flag"
 	"log"
 	"net/http"
@@ -11,6 +13,15 @@ import (
 // Start is the main entry point to the app
 func Start() {
 	var port uint64
+	var discordPublicKey ed25519.PublicKey
+
+	if x, ok := os.LookupEnv("DCRAFT_DISCORD_PUB_KEY"); ok {
+		k, err := hex.DecodeString(x)
+		if err != nil {
+			log.Fatal("invalid pub key", err)
+		}
+		discordPublicKey = ed25519.PublicKey(k)
+	}
 
 	if x, ok := os.LookupEnv("DCRAFT_PORT"); ok {
 		p, err := strconv.ParseUint(x, 10, 64)
@@ -30,7 +41,9 @@ func Start() {
 	}
 	log.Println("starting server on port", port)
 
-	s := Server{}
+	s := Server{
+		discordPublicKey: discordPublicKey,
+	}
 	http.ListenAndServe(
 		":"+strconv.FormatUint(port, 10),
 		s.Handler(),

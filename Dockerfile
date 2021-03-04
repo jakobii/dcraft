@@ -1,9 +1,10 @@
 FROM golang:alpine AS builder
 WORKDIR /app
+ENV CGO_ENABLED=0
 COPY . .
-RUN go build -o app .
+RUN go build -o dcraft .
 
 FROM scratch AS bin
-WORKDIR /app
-COPY --from=builder app .
-CMD ["./app"]  
+WORKDIR /
+COPY --from=builder /app/dcraft dcraft
+CMD ["/dcraft"]  

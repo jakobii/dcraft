@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -42,8 +41,7 @@ func newLogHTTP(r *http.Request) logHTTP {
 	}
 	var body string
 	if r.Body != nil {
-		b, _ := ioutil.ReadAll(r.Body)
-		body = "\n" + string(b)
+		body = readRequestBodyString(r)
 	}
 	return logHTTP{
 		Address: r.RemoteAddr,

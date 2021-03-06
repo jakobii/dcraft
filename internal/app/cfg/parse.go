@@ -1,22 +1,51 @@
 package cfg
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/jakobii/dcraft/internal/app"
+	"github.com/jakobii/dcraft/internal/app/auth"
 	"github.com/jakobii/dcraft/internal/app/whitelist"
+	"gopkg.in/yaml.v2"
 )
 
-// Get app server options
-func Get() ([]app.ServerOption, error) {
+// Parse app server options
+func Parse() ([]app.ServerOption, error) {
 	var port uint64
 	var discordPublicKey string
 	var whitelister app.Whitelister
+	var super string
+	var creds []auth.Credential
 
 	// ENVs
+	if x, ok := os.LookupEnv("DCRAFT_SUPER"); ok {
+		super = x
+	}
+	if path, ok := os.LookupEnv("DCRAFT_CREDENTIALS"); ok {
+		b, err := ioutil.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("fail to read credentials file: %v", err)
+		}
+		switch filepath.Ext(path) {
+		case ".yaml", ".yml":
+			err := yaml.Unmarshal(b, &creds)
+			if err != nil {
+				return nil, fmt.Errorf("fail to read credentials file: %v", err)
+			}
+		case ".json":
+			err := json.Unmarshal(b, &creds)
+			if err != nil {
+				return nil, fmt.Errorf("fail to read credentials file: %v", err)
+			}
+		}
+	}
+
 	if x, ok := os.LookupEnv("DCRAFT_DISCORD_PUB_KEY"); ok {
 		discordPublicKey = x
 	} else {
@@ -47,12 +76,18 @@ func Get() ([]app.ServerOption, error) {
 		port = 80
 	}
 
+	// INITS
+	authCache := auth.NewCache(auth.WithSuper(super))
+	authCache.PutCredential(creds...)
+
 	// OPTS
 	optDiscordPublicKey, err := app.WithDiscordPublicKey(discordPublicKey)
 	if err != nil {
 		return nil, err
 	}
 	return []app.ServerOption{
+		app.WithAuthenticator(authCache),
+		app.WithAuthorizer(authCache),
 		app.WithPort(port),
 		app.WithWhitelist(whitelister),
 		optDiscordPublicKey,

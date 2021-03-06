@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	opts, err := cfg.Get()
+	opts, err := cfg.Parse()
 	if err != nil {
 		log.Fatal(err)
 	}

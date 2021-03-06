@@ -15,6 +15,8 @@ paths:
         '200':
           description: success
   /whitelist:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     get:
       tags:
         - Whitelist
@@ -30,6 +32,8 @@ paths:
 
 
   /whitelist/{username}:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     put:
       tags:
         - Whitelist
@@ -56,6 +60,8 @@ paths:
           description: success
 
   /backups-schedule:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     post:
       tags:
         - Backup
@@ -86,7 +92,9 @@ paths:
                 items:
                   $ref: "#/components/schemas/BackupsSchedule"
 
-  /backups-schedule/{scheduleId}:  
+  /backups-schedule/{scheduleId}:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     delete:
       tags:
         - Backup
@@ -104,6 +112,8 @@ paths:
           description: not found
 
   /backups:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     get:
       tags:
         - Backup
@@ -126,6 +136,8 @@ paths:
             
         
   /backups/{filename}:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     get:
       tags:
         - Backup
@@ -148,6 +160,8 @@ paths:
 
 
   /world:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     get:
       tags:
         - World
@@ -160,6 +174,8 @@ paths:
                 $ref: "#/components/schemas/World"
 
   /world.seed:
+    parameters:
+      - $ref: "#/components/parameters/AuthToken"
     get:
       tags:
         - World
@@ -174,6 +190,14 @@ paths:
 
 
 components:
+  parameters:
+    AuthToken:
+      in: query
+      name: token
+      description: authorization token
+      schema:
+        type: string
+
   schemas:
     BackupsSchedule:
       type: object

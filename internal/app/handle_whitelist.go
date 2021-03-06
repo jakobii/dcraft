@@ -14,6 +14,11 @@ func (s *Server) routeWhitelist(r *mux.Router) {
 }
 
 func (s *Server) handleWhitelistGet(w http.ResponseWriter, r *http.Request) {
+	ok := s.requireAuth(w, r)
+	if !ok {
+		return
+	}
+
 	users, err := s.WhitelistGetter.Get(context.Background())
 	if err != nil {
 		s.ErrInternal(w, r, err)

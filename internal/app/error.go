@@ -17,14 +17,14 @@ func (s *Server) ErrInternal(w http.ResponseWriter, r *http.Request, err error) 
 
 // ErrorResponse is the standard http error response
 type ErrorResponse struct {
-	Error   error      `json:"error"`
+	Error   string     `json:"error"`
 	Request logRequest `json:"request"`
 }
 
 // NewErrorResponse ..
 func NewErrorResponse(r *http.Request, err error) ErrorResponse {
 	return ErrorResponse{
-		Error:   err,
+		Error:   err.Error(),
 		Request: newLogRequest(r),
 	}
 }

@@ -146,6 +146,33 @@ paths:
         "404":
           description: not found
 
+
+  /world:
+    get:
+      tags:
+        - World
+      responses:
+        '200':
+          description: a world
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/World"
+
+  /world.seed:
+    get:
+      tags:
+        - World
+      responses:
+        '200':
+          description: a world
+          content:
+            plain/text:
+              schema:
+                type: string
+
+
+
 components:
   schemas:
     BackupsSchedule:
@@ -160,5 +187,26 @@ components:
         time:
           type: string
           format: date-time
+
+    World:
+      type: object
+      required:
+        - id
+        - created
+        - seed
+        - operators
+      properties:
+        id:
+          type: string
+        created:
+          type: string
+          format: date-time
+        seed:
+          type: string
+        operators:
+          type: array
+          items:
+            type: string
+
 
   

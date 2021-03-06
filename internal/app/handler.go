@@ -12,6 +12,7 @@ func (s *Server) Handler() http.Handler {
 
 	routes := []routeHandler{
 		s.routeDiscord,
+		s.routeWhitelist,
 	}
 	for _, route := range routes {
 		route(r)

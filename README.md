@@ -1,6 +1,9 @@
 # dcraft
 rest api for minecraft servers
 
+docs: 
+- [openapi](https://github.com/jakobii/dcraft/blob/main/docs/openapi/openapi.yaml)
+
 
 ## getting started
 

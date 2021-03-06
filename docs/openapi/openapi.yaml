@@ -1,0 +1,164 @@
+openapi: 3.0.0
+info:
+  title: dcraft
+  description: A REST API for managing Minecraft servers.
+  version: 0.0.1
+servers:
+  - url: https://localhost/
+paths:
+  /discord:
+    post:
+      tags:
+        - Discord
+      summary: Handles discord interaction post requests
+      responses:
+        '200':
+          description: success
+  /whitelist:
+    get:
+      tags:
+        - Whitelist
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+
+
+  /whitelist/{username}:
+    put:
+      tags:
+        - Whitelist
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: success
+    delete:
+      tags:
+        - Whitelist
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: success
+
+  /backups-schedule:
+    post:
+      tags:
+        - Backup
+      description: schedule a server backup. only one backup can be performed at 
+        a time. the server maintains a backup process with a schedule. this endpoint 
+        only interacts with the schedule.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BackupsSchedule"
+                
+      responses:
+        "200":
+          description: success
+    get:
+      tags:
+        - Backup
+      description: retrieve backups scheduled to happen in the future.
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BackupsSchedule"
+
+  /backups-schedule/{scheduleId}:  
+    delete:
+      tags:
+        - Backup
+      parameters:
+        - in: path
+          name: scheduleId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: success
+        "404":
+          description: not found
+
+  /backups:
+    get:
+      tags:
+        - Backup
+      description: returns a list of backup files that can be retrieved.
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    filename:
+                      type: string
+                    created:
+                      type: string
+                      format: date-time
+            
+        
+  /backups/{filename}:
+    get:
+      tags:
+        - Backup
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A Zip file
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: not found
+
+components:
+  schemas:
+    BackupsSchedule:
+      type: object
+      required:
+        - id
+        - time
+      properties:
+        id:
+          type: string
+          format: uuid
+        time:
+          type: string
+          format: date-time
+
+  

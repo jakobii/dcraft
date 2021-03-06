@@ -1,7 +1,16 @@
 package main
 
-import "github.com/jakobii/dcraft/internal/app"
+import (
+	"log"
+
+	"github.com/jakobii/dcraft/internal/app"
+	"github.com/jakobii/dcraft/internal/app/cfg"
+)
 
 func main() {
-	app.Start()
+	opts, err := cfg.Get()
+	if err != nil {
+		log.Fatal(err)
+	}
+	app.Start(opts...)
 }

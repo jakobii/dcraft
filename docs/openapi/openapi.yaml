@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: dcraft
-  description: A REST API for managing Minecraft servers.
+  description: A REST API for managing a Minecraft server.
   version: 0.0.1
 servers:
   - url: https://localhost/

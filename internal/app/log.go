@@ -26,6 +26,13 @@ type logHTTP struct {
 	Request logRequest `json:"request"`
 }
 
+func newLogHTTP(r *http.Request) logHTTP {
+	return logHTTP{
+		Address: r.RemoteAddr,
+		Request: newLogRequest(r),
+	}
+}
+
 type logRequest struct {
 	ID      uuid.UUID         `json:"id"`
 	Method  string            `json:"method"`
@@ -34,7 +41,7 @@ type logRequest struct {
 	Body    string            `json:"body"`
 }
 
-func newLogHTTP(r *http.Request) logHTTP {
+func newLogRequest(r *http.Request) logRequest {
 	header := make(map[string]string)
 	for k, v := range r.Header {
 		header[k] = v[0]
@@ -43,14 +50,11 @@ func newLogHTTP(r *http.Request) logHTTP {
 	if r.Body != nil {
 		body = readRequestBodyString(r)
 	}
-	return logHTTP{
-		Address: r.RemoteAddr,
-		Request: logRequest{
-			ID:      uuid.New(),
-			Method:  r.Method,
-			URI:     r.RequestURI,
-			Headers: header,
-			Body:    body,
-		},
+	return logRequest{
+		ID:      uuid.New(),
+		Method:  r.Method,
+		URI:     r.RequestURI,
+		Headers: header,
+		Body:    body,
 	}
 }

@@ -7,7 +7,9 @@ import (
 
 // Server of the apps
 type Server struct {
+	port             uint64
 	discordPublicKey ed25519.PublicKey
+	WhitelistGetter  WhitelistGetter
 }
 
 // NewServer creates a new server
@@ -41,4 +43,18 @@ func WithDiscordPublicKey(key string) (ServerOption, error) {
 	return func(s *Server) {
 		s.discordPublicKey = ed25519.PublicKey(b)
 	}, nil
+}
+
+// WithWhitelist add a whitelist.json file path the server
+func WithWhitelist(w Whitelister) ServerOption {
+	return func(s *Server) {
+		s.WhitelistGetter = w
+	}
+}
+
+// WithPort server http port
+func WithPort(port uint64) ServerOption {
+	return func(s *Server) {
+		s.port = port
+	}
 }
